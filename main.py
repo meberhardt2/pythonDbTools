@@ -1,21 +1,29 @@
 import curses	# pylint: disable=unused-wildcard-import
-from classes.import_file import ImportFile
-
-running = True
+from classes.import_file import ImportFile # pylint: disable=no-name-in-module
 
 # ***********************************
-def mainMenu(curses, screen):
+running = True
+screen = ''
+# ***********************************
+
+
+# ***********************************
+def mainMenu():
+	global screen
+
 	keypress = ''
 	ycoord = 0
 	xcoord = 0
 	menu_entries = []
-	screen_height = curses.LINES
-	screen_width = curses.COLS
+	screen_height = curses.LINES					# pylint: disable=no-member
+	screen_width = curses.COLS						# pylint: disable=no-member
+
+	import_file = ImportFile(curses, screen)
 
 	menu_entries = [{
 		'display': 'i = import',
 		'key': 'i',
-		'function': ImportFile
+		'function': import_file.main
 	},
 	{
 		'display': 'q = quit',
@@ -44,33 +52,37 @@ def mainMenu(curses, screen):
 
 	for item in menu_entries:
 		if item['key'] == keypress:
-			item['function'](curses, screen)
+			item['function']()
+			keypress = ''
+			break
 # ***********************************
 
 
 # ***********************************
-def quit(curses, screen):
-	global running
+def quit():
+	global screen, running
 
 	running = False
 
-	curses.nocbreak()
+	curses.nocbreak()					# pylint: disable=no-member
 	screen.keypad(False)
-	curses.echo()
-	curses.endwin()
+	curses.echo()						# pylint: disable=no-member
+	curses.endwin()						# pylint: disable=no-member
 # ***********************************
 
 
 # *****************************************************************************************
-def main(curses):
+def main():
+	global screen
+
 	screen = curses.initscr()
-	curses.noecho()
+	curses.noecho()							# pylint: disable=no-member
 	screen.keypad(True)
-	curses.curs_set(False)					# pylint: disable=undefined-variable
+	curses.curs_set(False)					# pylint: disable=no-member
 	#curs_set(True)					# pylint: disable=undefined-variable
 
 	while running:
-		mainMenu(curses, screen)
+		mainMenu()
 
 	#refresh() or window.refresh()? screen.refresh()?
 	#terminate cursors
@@ -83,5 +95,5 @@ def main(curses):
 
 # *****************************************************************************************
 if __name__ == '__main__':
-    main(curses)
+	main()
 # *****************************************************************************************
