@@ -70,33 +70,57 @@ class ImportFile:
 	def scanDir(self):
 		from os import listdir
 		from os.path import isfile, join
+		file_system_errors = False
 
 		height_minus_menu = 0
 		width_minus_menu = 0
 
-		all_files = [f for f in listdir('../process_files/') if isfile(join('../process_files/', f))]
+		try:
+			all_files = [f for f in listdir('process_files/') if isfile(join('process_files/', f))]
+		except:
+			file_system_errors = True
 
-		height_minus_menu = self.screen_height - len(all_files)
-		self.ycoord = round(height_minus_menu / 2)
 
-		width_minus_menu = self.screen_width - 10
-		self.xcoord = round(width_minus_menu / 2)
+		if file_system_errors is True:
+			self.ycoord = round(self.screen_height / 2)
 
-		self.screen.clear()
-		self.screen.addstr(self.ycoord,self.xcoord - 2, 'Select File')
-		self.ycoord += 1
-		self.screen.addstr(self.ycoord,self.xcoord - 6, '-----------------------')
-		self.ycoord += 1
+			width_minus_menu = self.screen_width - 10
+			self.xcoord = round(width_minus_menu / 2)
 
-		counter = 1
-		for item in all_files:
-			self.screen.addstr(self.ycoord,self.xcoord, "{} = {}".format(counter, item))
+			self.screen.clear()
+			self.screen.addstr(self.ycoord,self.xcoord - 2, 'Select File')
 			self.ycoord += 1
-			counter += 1
-		self.screen.refresh()
+			self.screen.addstr(self.ycoord,self.xcoord - 6, '-----------------------')
+			self.ycoord += 1
+			self.screen.addstr(self.ycoord,self.xcoord, 'missing the folder process_files in this directory')
+			self.ycoord += 1
+			self.screen.addstr(self.ycoord,self.xcoord, "c = cancel")
+			self.ycoord += 1
 
-		self.screen.addstr(self.ycoord,self.xcoord, "c = cancel")
-		self.ycoord += 1
+
+		if file_system_errors is False:
+			height_minus_menu = self.screen_height - len(all_files)
+			self.ycoord = round(height_minus_menu / 2)
+
+			width_minus_menu = self.screen_width - 10
+			self.xcoord = round(width_minus_menu / 2)
+
+			self.screen.clear()
+			self.screen.addstr(self.ycoord,self.xcoord - 2, 'Select File')
+			self.ycoord += 1
+			self.screen.addstr(self.ycoord,self.xcoord - 6, '-----------------------')
+			self.ycoord += 1
+
+			counter = 1
+			for item in all_files:
+				self.screen.addstr(self.ycoord,self.xcoord, "{} = {}".format(counter, item))
+				self.ycoord += 1
+				counter += 1
+			self.screen.refresh()
+
+			self.screen.addstr(self.ycoord,self.xcoord, "c = cancel")
+			self.ycoord += 1
+
 
 		self.keypress = self.screen.getkey()
 
