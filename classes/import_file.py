@@ -12,6 +12,82 @@ class ImportFile:
 		self.xcoord = 0
 		self.screen_height = curses.LINES
 		self.screen_width = curses.COLS
+
+		self.filename = ''
+	# ***********************************
+
+
+	# ***********************************
+	def scanDir(self):
+		from os import listdir
+		from os.path import isfile, join
+		from common.utilities import MenuBuilder
+		
+		file_system_errors = False
+
+		menu_config = []
+
+		try:
+			all_files = [f for f in listdir('process_files/') if isfile(join('process_files/', f))]
+		except:
+			file_system_errors = True
+
+		if file_system_errors is True:
+			menu_config = {
+				'config': {
+					'title': 'Select File',
+					'subtitle': 'missing the folder process_files in this directory'
+				},
+				'menu_entries':  [
+					{
+						'display': 'c = cancel',
+						'key': 'i',
+						'function': self.menu()
+					}
+				]
+			}
+
+		if file_system_errors is False:
+			menu_config = {
+				'config': {
+					'title': 'Select File',
+					'subtitle': ''
+				},
+				'menu_entries':  []
+			}
+
+			counter = 1
+			for item in all_files:
+				menu_config['menu_entries'].append(
+					{
+						'display': "{} = {}".format(counter, item),
+						'key': counter,
+						'function': ''
+					}
+				)
+				counter += 1
+
+			menu_config['menu_entries'].append(
+				{
+					'display': "c = cancel",
+					'key': 'c',
+					'function': ''
+				}
+			)
+
+		self.keypress = MenuBuilder(self.curses, self.screen, menu_config)
+
+		if self.keypress == 'c':
+			self.menu()
+		else:
+			self.filename = all_files[self.keypress]
+	# ***********************************
+
+
+	# ***********************************
+	def to_main_menu(self):
+		#set running to false, the while loop in main will exit and return back to the main loop in main
+		ImportFile.running = False
 	# ***********************************
 
 
@@ -56,76 +132,6 @@ class ImportFile:
 				item['function']()
 				break
 
-	# ***********************************
-
-
-	# ***********************************
-	def to_main_menu(self):
-		#set running to false, the while loop in main will exit and return back to the main loop in main
-		ImportFile.running = False
-	# ***********************************
-
-
-	# ***********************************
-	def scanDir(self):
-		from os import listdir
-		from os.path import isfile, join
-		file_system_errors = False
-
-		height_minus_menu = 0
-		width_minus_menu = 0
-
-		try:
-			all_files = [f for f in listdir('process_files/') if isfile(join('process_files/', f))]
-		except:
-			file_system_errors = True
-
-
-		if file_system_errors is True:
-			self.ycoord = round(self.screen_height / 2)
-
-			width_minus_menu = self.screen_width - 10
-			self.xcoord = round(width_minus_menu / 2)
-
-			self.screen.clear()
-			self.screen.addstr(self.ycoord,self.xcoord - 2, 'Select File')
-			self.ycoord += 1
-			self.screen.addstr(self.ycoord,self.xcoord - 6, '-----------------------')
-			self.ycoord += 1
-			self.screen.addstr(self.ycoord,self.xcoord, 'missing the folder process_files in this directory')
-			self.ycoord += 1
-			self.screen.addstr(self.ycoord,self.xcoord, "c = cancel")
-			self.ycoord += 1
-
-
-		if file_system_errors is False:
-			height_minus_menu = self.screen_height - len(all_files)
-			self.ycoord = round(height_minus_menu / 2)
-
-			width_minus_menu = self.screen_width - 10
-			self.xcoord = round(width_minus_menu / 2)
-
-			self.screen.clear()
-			self.screen.addstr(self.ycoord,self.xcoord - 2, 'Select File')
-			self.ycoord += 1
-			self.screen.addstr(self.ycoord,self.xcoord - 6, '-----------------------')
-			self.ycoord += 1
-
-			counter = 1
-			for item in all_files:
-				self.screen.addstr(self.ycoord,self.xcoord, "{} = {}".format(counter, item))
-				self.ycoord += 1
-				counter += 1
-			self.screen.refresh()
-
-			self.screen.addstr(self.ycoord,self.xcoord, "c = cancel")
-			self.ycoord += 1
-
-
-		self.keypress = self.screen.getkey()
-
-		if self.keypress == 'c':
-			self.menu()
 	# ***********************************
 
 
