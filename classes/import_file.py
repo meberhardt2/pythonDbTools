@@ -2,7 +2,7 @@
 class ImportFile:
 	running = ''
 
-	# ***********************************
+	# ***************************************************
 	def __init__(self, curses, screen):
 		self.curses = curses
 		self.screen = screen
@@ -14,7 +14,8 @@ class ImportFile:
 		self.screen_width = curses.COLS
 
 		self.filename = ''
-	# ***********************************
+		self.import_table = ''
+	# ***************************************************
 
 
 	# ***********************************
@@ -44,7 +45,7 @@ class ImportFile:
 
 
 		if file_system_errors is False:
-			counter = 1
+			counter = 0
 			for item in all_files:
 				menu_config['menu_entries'].append(
 					{
@@ -69,9 +70,53 @@ class ImportFile:
 
 
 		if self.keypress == 'c':
-			self.menu()
+			#nothing has to be done here, it will return to the loop in main
+			pass
 		else:
-			self.filename = all_files[self.keypress]
+			if file_system_errors is False:
+				bad_keypress = False
+				#case str to int. if they typed in a letter, then dont go forward
+				try:
+					index = int(self.keypress)
+				except:
+					bad_keypress = True
+					self.scanDir()
+				
+				if bad_keypress is False:
+					if index >= len(all_files):
+						self.scanDir()
+					else:
+						self.filename = all_files[index]
+						self.import_file()
+	# ***********************************
+
+
+	# ***********************************
+	def import_file(self):
+		import mysql.connector
+
+		from common.utilities import MenuBuilder
+
+		ycoord, xcoord = self.screen.getyx()
+		xcoord = xcoord - 20
+		ycoord = ycoord - 1
+
+		menu_config = {
+			'config': {
+				'title': 'Import File',
+				'subtitle': ''
+			},
+			'menu_entries':  []
+		}
+
+		self.keypress = MenuBuilder(self.curses, self.screen, menu_config)
+
+		self.curses.curs_set(True)					# pylint: disable=no-member
+		self.curses.echo()
+
+		ycoord += 1
+		self.screen.addstr(ycoord,xcoord, 'What is the import table name: ')
+		self.import_table = self.screen.getstr()
 	# ***********************************
 
 

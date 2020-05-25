@@ -5,6 +5,7 @@ def MenuBuilder(curses, screen, menu_config):
 	xcoord = 0
 	screen_height = curses.LINES					# pylint: disable=no-member
 	screen_width = curses.COLS						# pylint: disable=no-member
+	keypress = ''
 
 	height_minus_menu = screen_height - len(menu_config['menu_entries'])
 	ycoord = round(height_minus_menu / 2)
@@ -27,7 +28,8 @@ def MenuBuilder(curses, screen, menu_config):
 		ycoord += 1
 	screen.refresh()
 
-	keypress = screen.getkey()
+	if len(menu_config['menu_entries']) > 0:
+		keypress = screen.getkey()
 
 	return keypress
 # ***********************************
