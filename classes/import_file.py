@@ -25,57 +25,48 @@ class ImportFile:
 		
 		file_system_errors = False
 
-		menu_config = []
+		menu_config = {
+			'config': {
+				'title': 'Select File',
+				'subtitle': ''
+			},
+			'menu_entries':  []
+		}
 
 		try:
 			all_files = [f for f in listdir('process_files/') if isfile(join('process_files/', f))]
 		except:
 			file_system_errors = True
 
+
 		if file_system_errors is True:
-			menu_config = {
-				'config': {
-					'title': 'Select File',
-					'subtitle': 'missing the folder process_files in this directory'
-				},
-				'menu_entries':  [
-					{
-						'display': 'c = cancel',
-						'key': 'i',
-						'function': self.menu()
-					}
-				]
-			}
+			menu_config['config']['subtitle'] = 'missing the folder process_files in this directory'
+
 
 		if file_system_errors is False:
-			menu_config = {
-				'config': {
-					'title': 'Select File',
-					'subtitle': ''
-				},
-				'menu_entries':  []
-			}
-
 			counter = 1
 			for item in all_files:
 				menu_config['menu_entries'].append(
 					{
 						'display': "{} = {}".format(counter, item),
 						'key': counter,
-						'function': ''
+						'run_function': ''
 					}
 				)
 				counter += 1
 
-			menu_config['menu_entries'].append(
-				{
-					'display': "c = cancel",
-					'key': 'c',
-					'function': ''
-				}
-			)
+
+		menu_config['menu_entries'].append(
+			{
+				'display': "c = cancel",
+				'key': 'c',
+				'run_function': self.menu
+			}
+		)
+
 
 		self.keypress = MenuBuilder(self.curses, self.screen, menu_config)
+
 
 		if self.keypress == 'c':
 			self.menu()
@@ -93,43 +84,34 @@ class ImportFile:
 
 	# ***********************************
 	def menu(self):
-		menu_entries = []
-		height_minus_menu = 0
-		width_minus_menu = 0
+		from common.utilities import MenuBuilder
 
-		menu_entries = [{
-			'display': 'm = main menu',
-			'key': 'm',
-			'function': self.to_main_menu
-		},
-		{
-			'display': 's = scan process_files',
-			'key': 's',
-			'function': self.scanDir
-		}]
+		menu_config = {
+			'config': {
+				'title': 'File Importer',
+				'subtitle': ''
+			},
+			'menu_entries':  [
+				{
+					'display': 'm = main menu',
+					'key': 'm',
+					'run_function': self.to_main_menu
+				},
+				{
+					'display': 's = scan process_files',
+					'key': 's',
+					'run_function': self.scanDir
+				}
+			]
+		}
 
-		height_minus_menu = self.screen_height - len(menu_entries)
-		self.ycoord = round(height_minus_menu / 2)
 
-		width_minus_menu = self.screen_width - 10
-		self.xcoord = round(width_minus_menu / 2)
+		self.keypress = MenuBuilder(self.curses, self.screen, menu_config)
 
-		self.screen.clear()
-		self.screen.addstr(self.ycoord,self.xcoord - 2, 'File Importer')
-		self.ycoord += 1
-		self.screen.addstr(self.ycoord,self.xcoord - 6, '-----------------------')
-		self.ycoord += 1
 
-		for item in menu_entries:
-			self.screen.addstr(self.ycoord,self.xcoord, item['display'])
-			self.ycoord += 1
-		self.screen.refresh()
-
-		self.keypress = self.screen.getkey()
-
-		for item in menu_entries:
+		for item in menu_config['menu_entries']:
 			if item['key'] == self.keypress:
-				item['function']()
+				item['run_function']()
 				break
 
 	# ***********************************
@@ -142,5 +124,6 @@ class ImportFile:
 		while ImportFile.running:
 			self.menu()
 	# ***********************************
+
 
 # *****************************************************************************************

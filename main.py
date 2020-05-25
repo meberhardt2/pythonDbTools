@@ -26,12 +26,12 @@ def mainMenu():
 			{
 				'display': 'i = import',
 				'key': 'i',
-				'function': import_file.main
+				'run_function': import_file.main
 			},
 			{
 				'display': 'q = quit',
 				'key': 'q',
-				'function': quit
+				'run_function': quit
 			}
 		]
 	}
@@ -40,7 +40,7 @@ def mainMenu():
 
 	for item in menu_config['menu_entries']:
 		if item['key'] == keypress:
-			item['function']()
+			item['run_function']()
 			keypress = ''
 			break
 # ***********************************
