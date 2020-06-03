@@ -94,6 +94,7 @@ class ImportFile:
 	# ***********************************
 	def import_file(self):
 		from common.utilities import MenuBuilder
+		from classes.database import Database			# pylint: disable=no-name-in-module
 
 		ycoord, xcoord = self.screen.getyx()
 		xcoord = xcoord - 20
@@ -117,6 +118,13 @@ class ImportFile:
 		self.import_table = self.screen.getstr()
 
 		#check if the table exists
+		Database()
+		if Database.error != '':
+			ycoord += 1
+			self.screen.addstr(ycoord,xcoord, Database.error)
+			self.screen.refresh()
+			self.screen.getkey()
+
 	# ***********************************
 
 
