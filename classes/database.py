@@ -20,9 +20,9 @@ class Database:
 		except mysql.connector.Error as err:
 			Database.connected = False
 			if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
-				Database.error = "Something is wrong with your user name or password"
+				Database.error = "Database Error: Something is wrong with your user name or password"
 			elif err.errno == errorcode.ER_BAD_DB_ERROR:
-				Database.error = "Database does not exist"
+				Database.error = "Database Error: Database does not exist"
 			else:
 				Database.error = err
 

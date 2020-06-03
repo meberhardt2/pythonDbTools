@@ -1,5 +1,5 @@
 from classes.import_file import ImportFile # pylint: disable=no-name-in-module
-from common.utilities import MenuBuilder
+from common.utilities import menu_builder, clear_screen
 
 # ***********************************
 running = True
@@ -32,7 +32,7 @@ def mainMenu():
 		]
 	}
 
-	keypress = MenuBuilder(menu_config)
+	keypress = menu_builder(menu_config)
 
 	for item in menu_config['menu_entries']:
 		if item['key'] == keypress:
@@ -47,6 +47,7 @@ def quit():
 	global running
 
 	running = False
+	clear_screen()
 # ***********************************
 
 

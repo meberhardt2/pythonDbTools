@@ -11,10 +11,10 @@ class ImportFile:
 
 
 	# ***********************************
-	def scanDir(self):
+	def scan_dir(self):
 		from os import listdir
 		from os.path import isfile, join
-		from common.utilities import MenuBuilder
+		from common.utilities import menu_builder
 		
 		file_system_errors = False
 
@@ -58,7 +58,7 @@ class ImportFile:
 		)
 
 
-		self.keypress = MenuBuilder(menu_config)
+		self.keypress = menu_builder(menu_config)
 
 
 		if self.keypress == 'c':
@@ -72,11 +72,11 @@ class ImportFile:
 					index = int(self.keypress)
 				except:
 					bad_keypress = True
-					self.scanDir()
+					self.scan_dir()
 				
 				if bad_keypress is False:
 					if index >= len(all_files):
-						self.scanDir()
+						self.scan_dir()
 					else:
 						self.filename = all_files[index]
 						self.import_file()
@@ -85,7 +85,7 @@ class ImportFile:
 
 	# ***********************************
 	def import_file(self):
-		from common.utilities import MenuBuilder
+		from common.utilities import menu_builder
 		from classes.database import Database			# pylint: disable=no-name-in-module
 
 		menu_config = {
@@ -96,7 +96,7 @@ class ImportFile:
 			'menu_entries':  []
 		}
 
-		self.keypress = MenuBuilder(menu_config)
+		self.keypress = menu_builder(menu_config)
 
 		print('What is the import table name: ')
 		self.import_table = input()
@@ -104,7 +104,11 @@ class ImportFile:
 		#check if the table exists
 		Database()
 		if Database.error != '':
+			print()
 			print(Database.error)
+			print('Press enter to go back to the main menu')
+			input()
+			ImportFile.running = False
 
 	# ***********************************
 
@@ -118,7 +122,7 @@ class ImportFile:
 
 	# ***********************************
 	def menu(self):
-		from common.utilities import MenuBuilder
+		from common.utilities import menu_builder
 
 		menu_config = {
 			'config': {
@@ -134,13 +138,13 @@ class ImportFile:
 				{
 					'display': 's = scan process_files',
 					'key': 's',
-					'run_function': self.scanDir
+					'run_function': self.scan_dir
 				}
 			]
 		}
 
 
-		self.keypress = MenuBuilder(menu_config)
+		self.keypress = menu_builder(menu_config)
 
 
 		for item in menu_config['menu_entries']:
