@@ -1,35 +1,28 @@
 
 # ***********************************
-def MenuBuilder(curses, screen, menu_config):
-	ycoord = 0
-	xcoord = 0
-	screen_height = curses.LINES					# pylint: disable=no-member
-	screen_width = curses.COLS						# pylint: disable=no-member
+def MenuBuilder(menu_config):
+	import os
+	import platform
+
 	keypress = ''
+	platform = platform.system()
 
-	height_minus_menu = screen_height - len(menu_config['menu_entries'])
-	ycoord = round(height_minus_menu / 2)
+	if platform == 'Windows':
+		os.system('cls')
+	else:
+		os.system('clear')
 
-	width_minus_menu = screen_width - 10
-	xcoord = round(width_minus_menu / 2)
-
-	screen.clear()
-	screen.addstr(ycoord,xcoord - 2, menu_config['config']['title'])
-	ycoord += 1
-	screen.addstr(ycoord,xcoord - 6, '-----------------------')
-	ycoord += 1
+	print(menu_config['config']['title'])
+	print('-----------------------')
 
 	if(menu_config['config']['subtitle'] != ''):
-		screen.addstr(ycoord,xcoord - 2, menu_config['config']['subtitle'])
-		ycoord += 1
+		print(menu_config['config']['subtitle'])
 
 	for item in menu_config['menu_entries']:
-		screen.addstr(ycoord,xcoord, item['display'])
-		ycoord += 1
-	screen.refresh()
+		print(item['display'])
 
 	if len(menu_config['menu_entries']) > 0:
-		keypress = screen.getkey()
+		keypress = input()
 
 	return keypress
 # ***********************************

@@ -3,16 +3,8 @@ class ImportFile:
 	running = ''
 
 	# ***************************************************
-	def __init__(self, curses, screen):
-		self.curses = curses
-		self.screen = screen
-
+	def __init__(self):
 		self.keypress = ''
-		self.ycoord = 0
-		self.xcoord = 0
-		self.screen_height = curses.LINES
-		self.screen_width = curses.COLS
-
 		self.filename = ''
 		self.import_table = ''
 	# ***************************************************
@@ -66,7 +58,7 @@ class ImportFile:
 		)
 
 
-		self.keypress = MenuBuilder(self.curses, self.screen, menu_config)
+		self.keypress = MenuBuilder(menu_config)
 
 
 		if self.keypress == 'c':
@@ -96,10 +88,6 @@ class ImportFile:
 		from common.utilities import MenuBuilder
 		from classes.database import Database			# pylint: disable=no-name-in-module
 
-		ycoord, xcoord = self.screen.getyx()
-		xcoord = xcoord - 20
-		ycoord = ycoord - 1
-
 		menu_config = {
 			'config': {
 				'title': 'Import File',
@@ -108,22 +96,15 @@ class ImportFile:
 			'menu_entries':  []
 		}
 
-		self.keypress = MenuBuilder(self.curses, self.screen, menu_config)
+		self.keypress = MenuBuilder(menu_config)
 
-		self.curses.curs_set(True)					# pylint: disable=no-member
-		self.curses.echo()
-
-		ycoord += 1
-		self.screen.addstr(ycoord,xcoord, 'What is the import table name: ')
-		self.import_table = self.screen.getstr()
+		print('What is the import table name: ')
+		self.import_table = input()
 
 		#check if the table exists
 		Database()
 		if Database.error != '':
-			ycoord += 1
-			self.screen.addstr(ycoord,xcoord, Database.error)
-			self.screen.refresh()
-			self.screen.getkey()
+			print(Database.error)
 
 	# ***********************************
 
@@ -159,7 +140,7 @@ class ImportFile:
 		}
 
 
-		self.keypress = MenuBuilder(self.curses, self.screen, menu_config)
+		self.keypress = MenuBuilder(menu_config)
 
 
 		for item in menu_config['menu_entries']:

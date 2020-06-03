@@ -5,9 +5,9 @@ class Database:
 
 	# ***************************************************
 	def __init__(self):
+		import databaseconfig
 		import mysql.connector
 		from mysql.connector import errorcode
-		import databaseconfig
 
 
 		self.db_conn = ''
