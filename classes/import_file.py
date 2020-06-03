@@ -93,8 +93,6 @@ class ImportFile:
 
 	# ***********************************
 	def import_file(self):
-		import mysql.connector
-
 		from common.utilities import MenuBuilder
 
 		ycoord, xcoord = self.screen.getyx()
@@ -117,6 +115,8 @@ class ImportFile:
 		ycoord += 1
 		self.screen.addstr(ycoord,xcoord, 'What is the import table name: ')
 		self.import_table = self.screen.getstr()
+
+		#check if the table exists
 	# ***********************************
 
 
@@ -164,6 +164,8 @@ class ImportFile:
 
 	# ***********************************
 	def main(self):
+		#import ../../databaseconfig as dbinfo
+		#connect(cfg.mysql["host"], cfg.mysql["user"], cfg.mysql["password"])
 		ImportFile.running = True
 
 		while ImportFile.running:
