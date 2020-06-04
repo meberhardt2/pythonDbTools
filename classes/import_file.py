@@ -8,6 +8,7 @@ class ImportFile:
 		self.filename = ''
 		self.import_table = ''
 		self.database = ''
+		self.file_columns = []
 	# ***************************************************
 
 
@@ -118,20 +119,59 @@ class ImportFile:
 				input()
 				self.prep()
 			else:
-				self.check_columns()
+				if self.check_columns() is False:
+					print()
+					print('Press enter to go back to the main menu')
+					input()
+					ImportFile.running = False
+					self.database.close()
+				else:
+					self.import_file()
+	# ***********************************
+
+
+	# ***********************************
+	def import_file(self):
+		print('import here')
+		input()
 	# ***********************************
 
 
 	# ***********************************
 	def check_columns(self):
 		cursor = self.database.db_conn.cursor(dictionary=True)
+		first_line = ''
+		table_columns = []
+		proceed = True
 
-		test = "'; select * from temp_table; --"
+		with open('process_files/'+self.filename) as f:
+			first_line = f.readline()
+		
+		self.file_columns = first_line.split("\t")
 
-		sql = """select * from temp_table where firstname = %s"""
-		#cursor.execute(insert_query, (string1, string2), multi=True)
-		cursor.execute(sql, (test,)) 
+		for i in range(len(self.file_columns)):
+			self.file_columns[i] = self.file_columns[i].replace("\n",'')
+
+		sql = "describe "+self.import_table
+		cursor.execute(sql) 
 		results = cursor.fetchall()
+
+		for row in results:
+			if row['Field'] != 'id':
+				table_columns.append(row['Field'])
+
+		for item in self.file_columns:
+			if item not in table_columns:
+				print(item)
+				proceed = False
+
+		#sql = "select * from temp_table where firstname = %s"
+		#cursor.execute(insert_query, (string1, string2), multi=True)
+		#the trailing comma is needed for single
+		#cursor.execute(sql, (test,)) 
+		#results = cursor.fetchall()
+
+		return proceed
 	# ***********************************
 
 
@@ -153,14 +193,14 @@ class ImportFile:
 			},
 			'menu_entries':  [
 				{
-					'display': 'm = main menu',
-					'key': 'm',
-					'run_function': self.to_main_menu
-				},
-				{
 					'display': 's = scan process_files',
 					'key': 's',
 					'run_function': self.scan_dir
+				},
+				{
+					'display': 'm = main menu',
+					'key': 'm',
+					'run_function': self.to_main_menu
 				}
 			]
 		}
@@ -173,7 +213,6 @@ class ImportFile:
 			if item['key'] == self.keypress:
 				item['run_function']()
 				break
-
 	# ***********************************
 
 
