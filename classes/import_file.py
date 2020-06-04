@@ -7,6 +7,7 @@ class ImportFile:
 		self.keypress = ''
 		self.filename = ''
 		self.import_table = ''
+		self.database = ''
 	# ***************************************************
 
 
@@ -79,12 +80,12 @@ class ImportFile:
 						self.scan_dir()
 					else:
 						self.filename = all_files[index]
-						self.import_file()
+						self.prep()
 	# ***********************************
 
 
 	# ***********************************
-	def import_file(self):
+	def prep(self):
 		from common.utilities import menu_builder
 		from classes.database import Database			# pylint: disable=no-name-in-module
 
@@ -102,14 +103,35 @@ class ImportFile:
 		self.import_table = input()
 
 		#check if the table exists
-		Database()
-		if Database.error != '':
+		self.database = Database()
+		if self.database.error != '':
 			print()
-			print(Database.error)
+			print(self.database.error)
 			print('Press enter to go back to the main menu')
 			input()
 			ImportFile.running = False
+			self.database.close()
+		else:
+			if self.import_table not in self.database.tables:
+				print()
+				print("Table doesn't exist. Press enter to try again")
+				input()
+				self.prep()
+			else:
+				self.check_columns()
+	# ***********************************
 
+
+	# ***********************************
+	def check_columns(self):
+		cursor = self.database.db_conn.cursor(dictionary=True)
+
+		test = "'; select * from temp_table; --"
+
+		sql = """select * from temp_table where firstname = %s"""
+		#cursor.execute(insert_query, (string1, string2), multi=True)
+		cursor.execute(sql, (test,)) 
+		results = cursor.fetchall()
 	# ***********************************
 
 

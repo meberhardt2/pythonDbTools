@@ -2,6 +2,9 @@
 class Database:
 	connected = True
 	error = ''
+	tables = []
+	db_conn = ''
+	cursor = ''
 
 	# ***************************************************
 	def __init__(self):
@@ -10,13 +13,8 @@ class Database:
 		from mysql.connector import errorcode
 
 
-		self.db_conn = ''
-		self.cursor = ''
-		self.tables = []
-
-
 		try:
-			self.db_conn = mysql.connector.connect(user=databaseconfig.dbinfo['user'], password=databaseconfig.dbinfo['password'], host=databaseconfig.dbinfo['host'], database=databaseconfig.dbinfo['database'], port=databaseconfig.dbinfo['port'])
+			Database.db_conn = mysql.connector.connect(user=databaseconfig.dbinfo['user'], password=databaseconfig.dbinfo['password'], host=databaseconfig.dbinfo['host'], database=databaseconfig.dbinfo['database'], port=databaseconfig.dbinfo['port'])
 		except mysql.connector.Error as err:
 			Database.connected = False
 			if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
@@ -27,7 +25,8 @@ class Database:
 				Database.error = err
 
 		if Database.connected is True:
-			self.cursor = self.db_conn.cursor(prepared=True)
+			#self.db_conn.cursor(prepared=True, dictionary=True) will cause an error, there's a bug that doesnt allow prepared and the use of column name returns to be used at the same time
+			Database.cursor = Database.db_conn.cursor(dictionary=True)
 			self.get_tables()
 	# ***************************************************
 
@@ -35,17 +34,17 @@ class Database:
 	# ***************************************************
 	def get_tables(self):
 		sql = ("show tables")
-		self.cursor.execute(sql) 
-		results = self.cursor.fetchall()
+		Database.cursor.execute(sql) 
+		results = Database.cursor.fetchall()
 
 		for row in results:
-			self.tables.append(row[0])
+			Database.tables.append(row['Tables_in_dms'])
 	# ***************************************************
 
 
 	# ***************************************************
 	def close(self):
-		self.db_conn.close()
+		Database.db_conn.close()
 		Database.connected = False
 	# ***************************************************
 
