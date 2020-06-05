@@ -28,9 +28,10 @@ class Database:
 				config_number = int(input())
 			except:
 				config_number = 'bad'
-				print('invalid entry. try again.')			
 			if isinstance(config_number, int) and config_number < len(available_dbs):
 				looping = False
+			else:
+				print('invalid entry. try again.')
 		
 		config = available_dbs[config_number]
 

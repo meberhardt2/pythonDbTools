@@ -135,8 +135,7 @@ class ImportFile:
 
 	# ***********************************
 	def check_table(self):
-		print('What is the import table name: ')
-		self.import_table = input()
+		self.import_table = input('What is the import table name: ')
 
 		if self.import_table not in self.database.tables:
 			return False
