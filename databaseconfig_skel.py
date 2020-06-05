@@ -4,6 +4,6 @@ databases = {
 		"user": "",
 		"password": "",
 		"database": "",
-		"port": 
+		"port": 0
 	},
 }
