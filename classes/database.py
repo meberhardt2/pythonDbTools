@@ -12,9 +12,30 @@ class Database:
 		import mysql.connector
 		from mysql.connector import errorcode
 
+		available_dbs = []
+		for item in databaseconfig.databases:
+			available_dbs.append(item)
+
+		print('Available databases:')
+		counter = 0
+		for item in available_dbs:
+			print(str(counter)+' = '+item)
+		print()
+		
+		looping = True
+		while looping:
+			try:
+				config_number = int(input())
+			except:
+				config_number = 'bad'
+				print('invalid entry. try again.')			
+			if isinstance(config_number, int) and config_number < len(available_dbs):
+				looping = False
+		
+		config = available_dbs[config_number]
 
 		try:
-			Database.db_conn = mysql.connector.connect(user=databaseconfig.dbinfo['user'], password=databaseconfig.dbinfo['password'], host=databaseconfig.dbinfo['host'], database=databaseconfig.dbinfo['database'], port=databaseconfig.dbinfo['port'])
+			Database.db_conn = mysql.connector.connect(user=databaseconfig.databases[config]['user'], password=databaseconfig.databases[config]['password'], host=databaseconfig.databases[config]['host'], database=databaseconfig.databases[config]['database'], port=databaseconfig.databases[config]['port'])
 		except mysql.connector.Error as err:
 			Database.connected = False
 			if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:

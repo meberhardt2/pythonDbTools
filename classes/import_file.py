@@ -43,7 +43,7 @@ class ImportFile:
 			for item in all_files:
 				menu_config['menu_entries'].append(
 					{
-						'display': "{} = {}".format(counter, item),
+						'display': str(counter)+" = "+item,
 						'key': counter,
 						'run_function': ''
 					}
@@ -100,10 +100,6 @@ class ImportFile:
 
 		self.keypress = menu_builder(menu_config)
 
-		print('What is the import table name: ')
-		self.import_table = input()
-
-		#check if the table exists
 		self.database = Database()
 		if self.database.error != '':
 			print()
@@ -111,22 +107,22 @@ class ImportFile:
 			print('Press enter to go back to the main menu')
 			input()
 			ImportFile.running = False
-			self.database.close()
 		else:
-			if self.import_table not in self.database.tables:
-				print()
-				print("Table doesn't exist. Press enter to try again")
-				input()
-				self.prep()
-			else:
-				if self.check_columns() is False:
-					print()
-					print('Press enter to go back to the main menu')
-					input()
-					ImportFile.running = False
-					self.database.close()
+			while True:
+				proceed = self.check_table()
+				if proceed is True:
+					break
 				else:
-					self.import_file()
+					print("Table doesn't exist. Try again")
+
+			if self.check_columns() is False:
+				print("The above columns don't exist")
+				print('Press enter to go back to the main menu')
+				input()
+				ImportFile.running = False
+				self.database.close()
+			else:
+				self.import_file()
 	# ***********************************
 
 
@@ -134,6 +130,18 @@ class ImportFile:
 	def import_file(self):
 		print('import here')
 		input()
+	# ***********************************
+
+
+	# ***********************************
+	def check_table(self):
+		print('What is the import table name: ')
+		self.import_table = input()
+
+		if self.import_table not in self.database.tables:
+			return False
+		else:
+			return True
 	# ***********************************
 
 

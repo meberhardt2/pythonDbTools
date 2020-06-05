@@ -33,7 +33,7 @@ def mainMenu():
 	}
 
 	keypress = menu_builder(menu_config)
-
+	
 	for item in menu_config['menu_entries']:
 		if item['key'] == keypress:
 			item['run_function']()

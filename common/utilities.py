@@ -27,9 +27,8 @@ def menu_builder(menu_config):
 	for item in menu_config['menu_entries']:
 		print(item['display'])
 
-	print('')
-
 	if len(menu_config['menu_entries']) > 0:
+		print()
 		keypress = input()
 	
 	return keypress
