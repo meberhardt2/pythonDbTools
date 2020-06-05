@@ -128,8 +128,14 @@ class ImportFile:
 
 	# ***********************************
 	def import_file(self):
-		print('import here')
-		input()
+		cursor = self.database.db_conn.cursor(dictionary=True)
+
+		columns = ",".join(self.file_columns)
+		sql = "LOAD DATA LOCAL INFILE 'process_files/"+self.filename+"' INTO TABLE "+self.import_table+" FIELDS TERMINATED BY '\\t' LINES TERMINATED BY '\\n' IGNORE 1 LINES ("+columns+")"
+		cursor.execute(sql)
+		input('done. press return to go back to the main menu') 
+		ImportFile.running = False
+		self.database.close()
 	# ***********************************
 
 
@@ -155,6 +161,10 @@ class ImportFile:
 			first_line = f.readline()
 		
 		self.file_columns = first_line.split("\t")
+
+		if len(self.file_columns) < 2:
+			proceed = False
+			print('Check file format')
 
 		for i in range(len(self.file_columns)):
 			self.file_columns[i] = self.file_columns[i].replace("\n",'')

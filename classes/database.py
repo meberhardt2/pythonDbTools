@@ -36,7 +36,7 @@ class Database:
 		config = available_dbs[config_number]
 
 		try:
-			Database.db_conn = mysql.connector.connect(user=databaseconfig.databases[config]['user'], password=databaseconfig.databases[config]['password'], host=databaseconfig.databases[config]['host'], database=databaseconfig.databases[config]['database'], port=databaseconfig.databases[config]['port'])
+			Database.db_conn = mysql.connector.connect(autocommit=True, user=databaseconfig.databases[config]['user'], password=databaseconfig.databases[config]['password'], host=databaseconfig.databases[config]['host'], database=databaseconfig.databases[config]['database'], port=databaseconfig.databases[config]['port'])
 		except mysql.connector.Error as err:
 			Database.connected = False
 			if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
